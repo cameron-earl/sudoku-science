@@ -52,6 +52,16 @@ export default class Solver {
 			if (this.moveCounts[move])
 				console.log(`${move}: ${this.moveCounts[move]}`)
 		}
+		if (!this.board.isSolved() && this.board._solvedArr) {
+			for (let i = 0; i < 81; i++) {
+				if (this.board.cells[i].value) continue
+				this._setCellValue(
+					this.board.cells[i],
+					Constants.solveMethods.cheat,
+					this.board._solvedArr[i],
+				)
+			}
+		}
 		return this.board.isSolved()
 	}
 

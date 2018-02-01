@@ -3,6 +3,7 @@ const Constants = {
 	totalCellCount: this.boardLength * this.boardLength,
 	totalHouseCount: this.boardLength * 3,
 	solveMethods: {
+		cheat: -1,
 		unsolved: 1,
 		provided: 2,
 		playerInput: 3,

@@ -1,0 +1,12 @@
+body {
+	background-image: url('../grey/grey_@2X.png');
+	background-repeat: repeat;
+}
+
+img {
+	margin-top: 10px;
+}
+
+span.u {
+	text-decoration: underline;
+}

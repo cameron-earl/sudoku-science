@@ -7,7 +7,6 @@ export default class Cell {
 		this._id = id
 		this._setHouses()
 		this._candidates = new CandidateSet(value)
-		console.log('fuck', this._candidates.getCandidateArray.length)
 		this.value = value
 		this.solveMethod = value
 			? Constants.solveMethods.provided

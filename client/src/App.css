@@ -2,6 +2,10 @@
 	text-align: center;
 }
 
+body {
+	text-align: center;
+}
+
 .button-group > button {
 	margin: 5px;
 }
@@ -19,4 +23,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+img.logo {
+	height: 120px;
 }

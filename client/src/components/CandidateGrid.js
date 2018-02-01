@@ -5,6 +5,8 @@ import React, { Component } from 'react'
 
 class CandidateGrid extends Component {
 	handleCandidateClick = ev => {
+		if (!this.props.selected) return
+		ev.stopPropagation()
 		let candidate = +ev.target.getAttribute('val')
 		this.props.toggleCandidate(this.props.cellId, candidate)
 	}
@@ -24,6 +26,7 @@ class CandidateGrid extends Component {
 						className="candidate-cell"
 						key={i * 3 + j}
 						val={i * 3 + j + 1}
+						cell-id={this.props.cellId}
 					>
 						{cell ? i * 3 + j + 1 : ' '}
 					</td>
