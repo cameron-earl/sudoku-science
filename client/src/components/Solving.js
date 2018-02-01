@@ -24,8 +24,18 @@ class Solving extends Component {
 		this.setState({ boardStr, board, solver })
 	}
 
-	solvePuzzle = () => {
-		this.state.solver.solvePuzzle()
+	solvePuzzle = maxSolveMethod => {
+		let { solver } = this.state
+		solver.solvePuzzle(maxSolveMethod)
+		// for (
+		// 	let i = 0;
+		// 	i < 500 && maxSolveMethod < Infinity && solver.board.isSolved();
+		// 	i++
+		// ) {
+		// 	console.log('bark!')
+		// 	this.getNewPuzzle()
+		// 	solver.solvePuzzle(maxSolveMethod)
+		// }
 		this.refreshBoard()
 	}
 

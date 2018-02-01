@@ -32,6 +32,26 @@ const Constants = {
 		eliminate: 2,
 	},
 	reversedSolveMethods: {},
+	descriptions: {
+		simpleNakedSingle:
+			'Find a row, column or box that is missing one value, then fill it in!',
+		nakedSingle:
+			'Find a cell that could only be one value. "Show Notes" (shift key) makes this easy!',
+		hiddenSingle:
+			'Find a house (row, column or box) that has only one cell that could be a certain value. Selecting a solved cell of that number, or simply pressing that number on your keyboard, will make this much easier.',
+		nakedPair:
+			'Find two cells in the same "house" (row, column or box) that have only the same two candidates. No other cell in that house could possibly be one of those values. You can eliminate those candidates by selecting the cell, then clicking or typing the number.',
+		hiddenPair:
+			'Find a house (row, column or box) with two values that are only found in two cells. Those cells can only be those two values. All other possible values can be eliminated from those two cells.',
+		nakedTriple:
+			'Find three cells in the same house that have only the same three candidates between them. No other cell in that house could possibly be one of those values. NOTE: This is not just sets like [123],[123],[123], but also sets like [12],[13],[23].',
+		hiddenTriple:
+			'Find a house with three values that are only found between three cells. Those cells can only be one of those three values. All other possible values can be eliminated.',
+		nakedQuad:
+			'Find four cells in the same house that have only the same four candidates between them. No other cell in that house could possibly be one of those values. NOTE: This is not just sets like [1234],[1234],[1234],[1234] but also sets like [12],[23],[1234],[134].',
+		hiddenQuad:
+			'Find a house with four values that are only found between four cells. Those cells can only be one of those four values. All other possible values can be eliminated.',
+	},
 }
 
 Constants.reversedSolveMethods = invert(Constants.solveMethods)

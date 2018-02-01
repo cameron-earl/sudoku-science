@@ -28,11 +28,14 @@ export default class Solver {
 
 	//public methods
 
-	solveEasiestMove() {
+	solveEasiestMove(maxSolveMethod) {
+		//solves easiest move below and not including maxSolveMethod
 		if (this.board.isSolved()) return false
 		for (let method in Constants.solveMethods) {
+			let methodVal = Constants.solveMethods[method]
 			if (!this.board.isValid()) return false
-			if (Constants.solveMethods[method] <= 3) continue
+			if (methodVal <= 3) continue
+			if (methodVal >= maxSolveMethod) continue
 			// console.log(method)
 			if (this['_' + method]()) return true
 		}
@@ -45,14 +48,18 @@ export default class Solver {
 			.reduce((s, m) => s + `${m} - ${this.moveCounts[m]}\n`, '')
 	}
 
-	solvePuzzle() {
-		for (let i = 0; i < 500 && this.solveEasiestMove(); i++) {}
+	solvePuzzle(maxSolveMethod = Infinity) {
+		for (let i = 0; i < 500 && this.solveEasiestMove(maxSolveMethod); i++) {}
 		console.log(this.board.toString(), this._actionLog)
 		for (let move in this.moveCounts) {
 			if (this.moveCounts[move])
 				console.log(`${move}: ${this.moveCounts[move]}`)
 		}
-		if (!this.board.isSolved() && this.board._solvedArr) {
+		if (
+			!this.board.isSolved() &&
+			this.board._solvedArr &&
+			maxSolveMethod == Infinity //arbitrary high number
+		) {
 			for (let i = 0; i < 81; i++) {
 				if (this.board.cells[i].value) continue
 				this._setCellValue(

@@ -4,7 +4,8 @@ import CandidateGrid from './CandidateGrid'
 import WrongGuess from './WrongGuess'
 // import Board from '../classes/board.js'
 import Constants from '../classes/constants.js'
-import { Button, Icon, Row, Col } from 'react-materialize'
+import { Button, Icon, Row, Col, Input } from 'react-materialize'
+import MethodDescription from './MethodDescription'
 
 class BoardDisplay extends Component {
 	state = {
@@ -12,6 +13,7 @@ class BoardDisplay extends Component {
 		activeCellId: null,
 		incorrectGuesses: 0,
 		showWrongGuessFlash: false,
+		methodToPractice: Infinity,
 	}
 
 	componentDidMount = () => {
@@ -37,7 +39,7 @@ class BoardDisplay extends Component {
 	handleKeyPress = ev => {
 		let key = +ev.which
 		// console.log(key)
-		let { activeCellId } = this.state
+		let { activeCellId, methodToPractice } = this.state
 		let activeCell = activeCellId
 			? this.props.board.getCell(activeCellId)
 			: null
@@ -59,10 +61,10 @@ class BoardDisplay extends Component {
 			this.props.setEmptyPuzzle()
 		} else if (key === 83) {
 			//s
-			this.props.solveOneStep()
+			this.props.solveOneStep(methodToPractice)
 		} else if (key === 80) {
 			//p
-			this.props.solvePuzzle()
+			this.props.solvePuzzle(methodToPractice)
 		} else if (activeCellId && key >= 37 && key <= 40) {
 			// arrow keys
 			ev.preventDefault()
@@ -129,9 +131,35 @@ class BoardDisplay extends Component {
 		}, 500)
 	}
 
+	camelToNormalCase = str => {
+		let spaced = str.replace(/([A-Z])/g, ' $1')
+		return spaced.charAt(0).toUpperCase() + spaced.slice(1)
+	}
+
 	render() {
 		let { board } = this.props
-		let { showCandidates, activeCellId, activeVal } = this.state
+		let {
+			showCandidates,
+			activeCellId,
+			activeVal,
+			methodToPractice,
+		} = this.state
+		let solveMethods = Constants.solveMethods
+		let solveMethodOptions = []
+		for (let key in solveMethods) {
+			if (solveMethods[key] >= solveMethods.hiddenSingle) {
+				solveMethodOptions.push(
+					<option key={solveMethods[key]} value={solveMethods[key]}>
+						{this.camelToNormalCase(key)}
+					</option>,
+				)
+			}
+		}
+		solveMethodOptions.push(
+			<option key={Infinity} value={Infinity}>
+				Everything
+			</option>,
+		)
 		let boardTableRows = board.rows.map((row, r) => (
 			<tr key={r}>
 				{row.cells.map((cell, c) => {
@@ -170,63 +198,76 @@ class BoardDisplay extends Component {
 			</tr>
 		))
 		return (
-			<div className="flex-row">
-				<div className="sudoku-container">
-					<table className="board">
-						<tbody>{boardTableRows}</tbody>
-					</table>
-				</div>
-				<div className="sidebar">
-					<Button
-						className="green accent-4"
-						waves="light"
-						onClick={this.toggleCandidateView}
-					>
-						{showCandidates ? 'Hide ' : 'Show '}
-						Notes (⇧)
-						<Icon left>apps</Icon>
-					</Button>
-					<Button
-						className="green accent-4"
-						waves="light"
-						onClick={this.props.refresh}
-					>
-						<span className="u">R</span>eset<Icon left>refresh</Icon>
-					</Button>
-					<Button
-						className="green accent-4"
-						waves="light"
-						onClick={this.props.setNewPuzzle}
-					>
-						<span className="u">N</span>ew Puzzle<Icon left>cached</Icon>
-					</Button>
-					<Button
-						className="green accent-4"
-						waves="light"
-						onClick={this.props.setEmptyPuzzle}
-					>
-						<span className="u">B</span>lank Puzzle<Icon left>grid_on</Icon>
-					</Button>
-					<Button
-						waves="light"
-						className="black"
-						onClick={this.props.solveOneStep}
-					>
-						<span className="u">S</span>olve One <span className="u">S</span>tep<Icon
-							left
+			<Fragment>
+				<div className="flex-row">
+					<div className="sudoku-container">
+						<table className="board">
+							<tbody>{boardTableRows}</tbody>
+						</table>
+					</div>
+					<div className="sidebar">
+						<Button
+							className="green accent-4"
+							waves="light"
+							onClick={this.toggleCandidateView}
 						>
-							add
-						</Icon>
-					</Button>
-					<Button
-						className="black"
-						waves="light"
-						onClick={this.props.solvePuzzle}
-					>
-						Solve <span className="u">P</span>uzzle<Icon left>send</Icon>
-					</Button>
+							{showCandidates ? 'Hide ' : 'Show '}
+							Notes (⇧)
+							<Icon left>apps</Icon>
+						</Button>
+						<Button
+							className="green accent-4"
+							waves="light"
+							onClick={this.props.refresh}
+						>
+							<span className="u">R</span>eset<Icon left>refresh</Icon>
+						</Button>
+						<Button
+							className="green accent-4"
+							waves="light"
+							onClick={this.props.setNewPuzzle}
+						>
+							<span className="u">N</span>ew Puzzle<Icon left>cached</Icon>
+						</Button>
+						<Button
+							className="green accent-4"
+							waves="light"
+							onClick={this.props.setEmptyPuzzle}
+						>
+							<span className="u">B</span>lank Puzzle<Icon left>grid_on</Icon>
+						</Button>
+						<Button
+							waves="light"
+							className="black"
+							onClick={this.props.solveOneStep}
+						>
+							<span className="u">S</span>olve One <span className="u">S</span>tep<Icon
+								left
+							>
+								add
+							</Icon>
+						</Button>
+						<Input
+							type="select"
+							label="Solve up to..."
+							defaultValue={methodToPractice}
+							onChange={ev =>
+								this.setState({ methodToPractice: ev.target.value })
+							}
+						>
+							{solveMethodOptions}
+						</Input>
+						<Button
+							className="black"
+							waves="light"
+							onClick={() => this.props.solvePuzzle(methodToPractice)}
+						>
+							Solve <span className="u">P</span>uzzle<Icon left>send</Icon>
+						</Button>
+					</div>
 				</div>
-			</div>
+				<MethodDescription method={methodToPractice} />
+			</Fragment>
 		)
 	}
 }
