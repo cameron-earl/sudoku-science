@@ -1,7 +1,7 @@
 export default class House {
 	// ABSTRACT CLASS
 
-	houseTypes = Object.freeze({
+	static houseTypes = Object.freeze({
 		row: 1,
 		column: 2,
 		box: 3,
@@ -143,7 +143,7 @@ export default class House {
 	getAllCandidates() {
 		let set = new Set()
 		for (let i = 0; i < this.cells.length; i++) {
-			if (this.cells[i].value) continue
+			if (this.cells[i].value) continue //cell is solved
 			let candidates = this.cells[i].candidates.getCandidateArray()
 			for (let val of candidates) {
 				set.add(val)

@@ -1,12 +1,11 @@
-import React, { Fragment, Component } from 'react'
+import React, { Component } from 'react'
 // import './BoardDisplay.css'
 import Board from '../classes/board.js'
 import Solver from '../classes/solver.js'
 import BoardDisplay from './BoardDisplay.js'
 import Puzzles from '../sudoku-boards/sudoku-boards.js'
 import quickSolve from '../classes/quicksolve.js'
-import Constants from '../classes/constants.js'
-import { Container, Button, Icon } from 'react-materialize'
+import { Container } from 'react-materialize'
 
 class Solving extends Component {
 	state = {
@@ -39,12 +38,14 @@ class Solving extends Component {
 		this.refreshBoard()
 	}
 
-	solveOneStep = () => {
+	solveOneStep = ev => {
+		if (ev && ev.stopPropagation) ev.stopPropagation()
 		this.state.solver.solveEasiestMove()
 		this.refreshBoard()
 	}
 
-	getNewPuzzle = () => {
+	getNewPuzzle = ev => {
+		if (ev) ev.stopPropagation()
 		let randomIndex = Math.floor(Math.random() * Puzzles.length)
 		let newPuzzle = Puzzles[randomIndex]
 		return newPuzzle
@@ -54,13 +55,14 @@ class Solving extends Component {
 		this.setState({ boardStr: boardStr }, this.componentDidMount)
 	}
 
-	setEmptyPuzzle = () => {
+	setEmptyPuzzle = ev => {
 		let boardStr =
 			'000000000000000000000000000000000000000000000000000000000000000000000000000000000'
 		this.setState({ boardStr }, this.componentDidMount)
 	}
 
-	refreshBoard = () => {
+	refreshBoard = ev => {
+		if (ev) ev.stopPropagation()
 		this.setState({ board: this.state.solver.board })
 	}
 

@@ -1,5 +1,6 @@
 import Constants from './constants.js'
 import Cell from './cell.js'
+import House from './house.js'
 
 export default class Solver {
 	constructor(board) {
@@ -160,6 +161,45 @@ export default class Solver {
 		return false
 	}
 
+	// given an array of cells in a house of type sharedHouseType,
+	// return the second house they all share, or false if there isn't one
+	_getSecondSharedHouse(cells, sharedHouseType) {
+		let types = House.houseTypes
+		const boxNum = cells[0].boxNumber
+		const rowNum = cells[0].rowNumber
+		const colNum = cells[0].columnNumber
+		let shareBox = true
+		let shareRow = true
+		let shareCol = true
+		for (let i = 1; i < cells.length; i++) {
+			shareBox = shareBox && boxNum === cells[i].boxNumber
+			shareRow = shareRow && rowNum === cells[i].rowNumber
+			shareCol = shareCol && colNum === cells[i].colNumber
+		}
+		if (shareBox + shareCol + shareRow < 2) return false
+		let secondSharedType
+		switch (sharedHouseType) {
+			case types.box:
+				secondSharedType = shareRow ? types.row : types.column
+				break
+			case types.row:
+				secondSharedType = shareBox ? types.box : types.column
+				break
+			case types.column:
+				secondSharedType = shareRow ? types.row : types.box
+				break
+			default:
+				throw new Error('Called _getSecondSharedHouse incorrectly')
+		}
+		let secondSharedHouse =
+			secondSharedType === types.box
+				? this.board.boxes[boxNum - 1]
+				: secondSharedType === types.row
+					? this.board.rows[rowNum - 1]
+					: this.board.columns[colNum - 1]
+		return secondSharedHouse
+	}
+
 	//solving methods
 
 	// Find a house with 8 solved cells, and fill in the last.
@@ -195,6 +235,31 @@ export default class Solver {
 			}
 		}
 		return false
+	}
+
+	_intersectionRemoval() {
+		const solveMethod = Constants.solveMethods.intersectionRemoval
+		for (let house of this.board.houses) {
+			let changed = false
+			for (let val = 1; !changed && val <= 9; val++) {
+				let cells = house.getUnsolvedCellsWithCandidate(val)
+				if (cells.length === 0 || cells.length > 3) continue
+				//check to see if all cells share two houses
+				let secondSharedHouse = this._getSecondSharedHouse(
+					cells,
+					house.houseType,
+				)
+				if (!secondSharedHouse) continue
+				//remove candidates from all other cells in second house
+				for (let cell of secondSharedHouse.cells) {
+					if (!cells.includes(cell)) {
+						changed =
+							changed || this._eliminateCellCandidate(cell, val, solveMethod)
+					}
+				}
+			}
+			if (changed) return true
+		}
 	}
 
 	_nakedPair() {
@@ -242,6 +307,7 @@ export default class Solver {
 				if (theseCandidates.size === n) {
 					//success! remove these candidates from all other cells
 					let cellsToTrim = house.getUnsolvedCells()
+					//Get all unsolved cells except selected cells
 					for (let i = 0, j = 0; i < n && j < cellsToTrim.length; j++) {
 						if (cellsToTrim[j].id === cells[indexes[i]].id) {
 							cellsToTrim = [

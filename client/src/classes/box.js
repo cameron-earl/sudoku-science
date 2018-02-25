@@ -3,7 +3,7 @@ import House from './house.js'
 export default class Box extends House {
 	constructor(houseNumber) {
 		super(houseNumber)
-		this._houseType = this.houseTypes.box
+		this._houseType = House.houseTypes.box
 	}
 
 	toString() {

@@ -3,7 +3,7 @@ import House from './house.js'
 export default class Row extends House {
 	constructor(houseNumber) {
 		super(houseNumber)
-		this._houseType = this.houseTypes.row
+		this._houseType = House.houseTypes.row
 	}
 
 	toString() {

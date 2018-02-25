@@ -12,7 +12,7 @@ const Constants = {
 		hiddenSingle: 5,
 		nakedPair: 6,
 		hiddenPair: 7,
-		// intersectionRemoval: 8,
+		intersectionRemoval: 8,
 		nakedTriple: 9,
 		hiddenTriple: 10,
 		nakedQuad: 11,
@@ -51,6 +51,8 @@ const Constants = {
 			'Find four cells in the same house that have only the same four candidates between them. No other cell in that house could possibly be one of those values. NOTE: This is not just sets like [1234],[1234],[1234],[1234] but also sets like [12],[23],[1234],[134].',
 		hiddenQuad:
 			'Find a house with four values that are only found between four cells. Those cells can only be one of those four values. All other possible values can be eliminated.',
+		intersectionRemoval:
+			'Find a house in which a candidate only appears in unsolved cells that share another house. Eliminate the candidate from the rest of the cells of the second house.',
 	},
 }
 

@@ -1,10 +1,10 @@
 import React, { Fragment, Component } from 'react'
 import './BoardDisplay.css'
 import CandidateGrid from './CandidateGrid'
-import WrongGuess from './WrongGuess'
+// import WrongGuess from './WrongGuess'
 // import Board from '../classes/board.js'
 import Constants from '../classes/constants.js'
-import { Button, Icon, Row, Col, Input } from 'react-materialize'
+import { Button, Icon, Input } from 'react-materialize'
 import MethodDescription from './MethodDescription'
 
 class BoardDisplay extends Component {
@@ -12,6 +12,7 @@ class BoardDisplay extends Component {
 		showCandidates: false,
 		activeCellId: null,
 		incorrectGuesses: 0,
+		activeVal: null,
 		showWrongGuessFlash: false,
 		methodToPractice: Infinity,
 	}
@@ -19,13 +20,14 @@ class BoardDisplay extends Component {
 	componentDidMount = () => {
 		window.addEventListener('keydown', this.handleKeyPress)
 		window.addEventListener('click', ev => {
-			if (this.state.activeCellId) {
+			if (this.state.activeCellId || this.state.activeVal) {
 				this.setState({ activeCellId: null, activeVal: null })
 			}
 		})
 	}
 
 	toggleCandidateView = ev => {
+		if (ev) ev.stopPropagation()
 		this.setState({ showCandidates: !this.state.showCandidates })
 	}
 
@@ -39,14 +41,14 @@ class BoardDisplay extends Component {
 	handleKeyPress = ev => {
 		let key = +ev.which
 		// console.log(key)
-		let { activeCellId, methodToPractice } = this.state
+		let { activeCellId, activeVal, methodToPractice } = this.state
 		let activeCell = activeCellId
 			? this.props.board.getCell(activeCellId)
 			: null
 
 		if (key === 27) {
 			//esc
-			this.setState({ activeCellId: null })
+			this.setState({ activeCellId: null, activeVal: null })
 		} else if (key === 16) {
 			// shift
 			this.toggleCandidateView()
@@ -102,7 +104,9 @@ class BoardDisplay extends Component {
 				}
 				this.setState({ activeVal: activeCell.value })
 			} else {
-				this.setState({ activeCellId: null, activeVal: val })
+				// if that value is already selected, turn it off
+				activeVal = activeVal === val ? null : val
+				this.setState({ activeCellId: null, activeVal })
 			}
 		}
 	}
@@ -236,6 +240,16 @@ class BoardDisplay extends Component {
 						>
 							<span className="u">B</span>lank Puzzle<Icon left>grid_on</Icon>
 						</Button>
+						<Input
+							type="select"
+							label="Solve up to..."
+							defaultValue={methodToPractice}
+							onChange={ev =>
+								this.setState({ methodToPractice: ev.target.value })
+							}
+						>
+							{solveMethodOptions}
+						</Input>
 						<Button
 							waves="light"
 							className="black"
@@ -247,16 +261,7 @@ class BoardDisplay extends Component {
 								add
 							</Icon>
 						</Button>
-						<Input
-							type="select"
-							label="Solve up to..."
-							defaultValue={methodToPractice}
-							onChange={ev =>
-								this.setState({ methodToPractice: ev.target.value })
-							}
-						>
-							{solveMethodOptions}
-						</Input>
+
 						<Button
 							className="black"
 							waves="light"
